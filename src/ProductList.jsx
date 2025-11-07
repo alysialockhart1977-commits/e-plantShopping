@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import './ProductList.css'
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux'; // import useDispatch and useSelector
+import { addItem } from './actions'; // Ensure you have the correct path
 import CartItem from './CartItem';
+import './ProductList.css';
 function ProductList({ onHomeClick }) {
     const dispatch = useDispatch(); // Initialize Redux dispatch
+
     const [showCart, setShowCart] = useState(false);
     const [addedToCart, setAddedToCart] = useState({});
     const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
@@ -234,18 +237,38 @@ function ProductList({ onHomeClick }) {
         fontSize: '30px',
         textDecoration: 'none',
     }
+    const calculateTotalQuantity = () => {
+        return CartItems ? CartItems.reduce((total, item) => total + item.quantity, 0) : 0;
+    };
     const handleAddToCart = (product) => {
-        try {
-            dispatch(addItem(product)); // Dispatch the action to add the product to the cart (Redux action)
+        if (!addedToCart[product.name]) { // Check if the item is already added
+            try {
+                dispatch(addItem(product)); // Dispatch to add to cart
+                setAddedToCart(prevState => ({ 
+                    ...prevState, 
+                    [product.name]: true // Mark item as added
+                }));
+                alert(`${product.name} has been added to your cart!`); // Feedback for the user
+            } catch (error) {
+                console.error("Error adding to cart: ", error); // Error handling
+            }
+        };
 
-            setAddedToCart((prevState) => ({ // Update the local state to reflect that the product has been added
-                ...prevState, // Spread the previous state to retain existing entries
-                [product.name]: true, // Set the current product's name as a key with value 'true'
-            }));
-        } catch (error) {
-            console.error("Error adding to cart: ", error); // Simple error handling
+        const handleUpdateQuantity = (itemName, quantity) => {
+            if (quantity < 1) {
+                dispatch(removeItem(itemName)); // Remove item if quantity is less than 1
+            } else {
+                dispatch(updateQuantity(itemName, quantity)); // Update the item quantity
+            
+        };
+    
+        const handleRemoveItem = (itemName) => {
+            dispatch(removeItem(itemName)); // Dispatch to remove item
+            alert(`${itemName} has been removed from your cart!`);
+        };
         }
     };
+    
 
     const handleCartClick = (e) => {
         e.preventDefault();
@@ -285,11 +308,13 @@ function ProductList({ onHomeClick }) {
                                         <div className="product-description">{plant.description}</div>
                                         <div className="product-cost">{plant.cost}</div>
                                         <button
-                                            className="product-button"
-                                            onClick={() => handleAddToCart(plant)} // Handle adding plant to cart
-                                        >
-                                            Add to Cart
-                                        </button>
+    className="product-button"
+    onClick={() => handleAddToCart(plant)}
+    disabled={addedToCart[plant.name]} // Disable if added
+>
+    {addedToCart[plant.name] ? 'Added to Cart' : 'Add to Cart'}
+</button>
+
                                     </div>
                                 ))}
                             </div>
