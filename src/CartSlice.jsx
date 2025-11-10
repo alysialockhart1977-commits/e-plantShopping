@@ -1,35 +1,41 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { act } from 'react';
 
-export const CartSlice = createSlice({
+export const CreatSlice = createSlice({
   name: 'cart',
   initialState: {
     items: [], // Initialize items as an empty array
   },
   reducers: {
     addItem: (state, action) => {
-      const { name, image, cost } = action.payload; // Destructure product details from the action payload
-      const existingItem = state.items.find(item => item.name === name);
-      if (existingItem) {
-        existingItem.quantity++; // Increment the quantity if the item exists
-      } else {
-        state.items.push({ name, image, cost, quantity: 1 }); // Add a new item with quantity 1
+     const item=action.payload;
+     const existingItem=state.items.find((i)=>i.name===item.id);
+      if(existingItem){
+        existingItem.quantity++;
+      }else{
+        state.items.push({...item,quantity:1});
       }
     },
     removeItem: (state, action) => {
-      state.items = state.items.filter(item => item.name !== action.payload.name); // Remove item by name
+      const item=action.payload;
+      const existingItem=state.items.find((i)=>i.name===item.name);
+      if(existingItem){
+        state.items=state.items.filter((i)=>i.name!==item.name);
+      }
     },
     updateQuantity: (state, action) => {
-      const { name, quantity } = action.payload; // Destructure the product name and new quantity from the action payload
-      const itemToUpdate = state.items.find(item => item.name === name); // Find the item in the cart
-      if (itemToUpdate) {
-        itemToUpdate.quantity = quantity; // Update quantity if item is found
+      const { name, quantity } = action.payload;
+      const item = state.items.find((i) => i.name === name);
+      item.quantity = quantity;
+      if (item.quantity === 0) {
+        state.items = state.items.filter((i) => i.name !== name);
       }
+
+    
     },
   },
 });
 
-// Export actions for use in components
-export const { addItem, removeItem, updateQuantity } = CartSlice.actions;
+export const { addItem, removeItem, updateQuantity } = CreatSlice.actions;
 
-// Export reducer for store
-export default CartSlice.reducer;
+export default CreatSlice.reducer;
