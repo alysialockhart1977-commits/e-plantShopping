@@ -1,21 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import './ProductList.css'
-import CartItem from './CartItem';
-function ProductList({ onHomeClick }) {
-    const [showCart, setShowCart] = useState(false);
-    const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
+import React, { useState } from "react";
+import "./ProductList.css";
+import { useDispatch, useSelector } from "react-redux";
+import { addItem } from "./CartSlice";
+import CartItem from "./CartItem";
 
-    const plantsArray = [
+function ProductList({ onHomeClick }) {
+  const dispatch = useDispatch();
+  const cartItems = useSelector((state) => state.cart.items);
+
+  const [showCart, setShowCart] = useState(false);
+
+  // Add to cart handler
+  const handleAddToCart = (plant) => {
+    dispatch(
+      addItem({
+        name: plant.name,
+        image: plant.image,
+        description: plant.description,
+        price: Number(plant.cost.replace("$", "")),
+      })
+    );
+  };
+
+  // Check if item already in cart
+  const isInCart = (plantName) => {
+    return cartItems.some((item) => item.name === plantName);
+  };
+
+  // THE PLANT DATA
+  const plantsArray = [
+    {
+      category: "Air Purifying Plants",
+      plants: [
         {
-            category: "Air Purifying Plants",
-            plants: [
-                {
-                    name: "Snake Plant",
-                    image: "https://cdn.pixabay.com/photo/2021/01/22/06/04/snake-plant-5939187_1280.jpg",
-                    description: "Produces oxygen at night, improving air quality.",
-                    cost: "$15"
-                },
-                {
+          name: "Snake Plant",
+          image: "https://cdn.pixabay.com/photo/2021/01/22/06/04/snake-plant-5939187_1280.jpg",
+          description: "Produces oxygen at night, improving air quality.",
+          cost: "$15",
+        },
+                        {
                     name: "Spider Plant",
                     image: "https://cdn.pixabay.com/photo/2018/07/11/06/47/chlorophytum-3530413_1280.jpg",
                     description: "Filters formaldehyde and xylene from the air.",
@@ -252,6 +275,7 @@ function ProductList({ onHomeClick }) {
         e.preventDefault();
         setShowCart(false);
     };
+   
     return (
         <div>
             <div className="navbar" style={styleObj}>
@@ -272,16 +296,49 @@ function ProductList({ onHomeClick }) {
                     <div> <a href="#" onClick={(e) => handleCartClick(e)} style={styleA}><h1 className='cart'><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" id="IconChangeColor" height="68" width="68"><rect width="156" height="156" fill="none"></rect><circle cx="80" cy="216" r="12"></circle><circle cx="184" cy="216" r="12"></circle><path d="M42.3,72H221.7l-26.4,92.4A15.9,15.9,0,0,1,179.9,176H84.1a15.9,15.9,0,0,1-15.4-11.6L32.5,37.8A8,8,0,0,0,24.8,32H8" fill="none" stroke="#faf9f9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" id="mainIconPathAttribute"></path></svg></h1></a></div>
                 </div>
             </div>
-            {!showCart ? (
-                <div className="product-grid">
+  ];
+// UI RETURN
+  return (
+    <div>
+  {/* PRODUCT LIST OR CART*/}
+      {!showCart ? (
+        <div className="product-grid">
+          {plantsArray.map((category, index) => (
+            <div key={index}>
+              <h1>{category.category}</h1>
 
+              <div className="product-list">
+                {category.plants.map((plant, plantIndex) => (
+                  <div className="product-card" key={plantIndex}>
+                    <img
+                      className="product-image"
+                      src={plant.image}
+                      alt={plant.name}
+                    />
+                    <div className="product-title">{plant.name}</div>
+                    <div className="product-description">{plant.description}</div>
+                    <div className="product-cost">{plant.cost}</div>
 
-                </div>
-            ) : (
-                <CartItem onContinueShopping={handleContinueShopping} />
-            )}
+                    {/* Correct disabled button */}
+                    <button
+                      disabled={isInCart(plant.name)}
+                      className={isInCart(plant.name) ? "disabled" : ""}
+                      onClick={() => handleAddToCart(plant)}
+                    >
+                      {isInCart(plant.name) ? "Added to Cart" : "Add to Cart"}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
-    );
+      ) : (
+        <CartItem onContinueShopping={() => setShowCart(false)} />
+      )}
+    </div>
+</div>
+  );
 }
 
 export default ProductList;
