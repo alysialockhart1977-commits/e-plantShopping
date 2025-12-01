@@ -80,13 +80,15 @@ const CartItem = ({ onContinueShopping }) => {
         </div>
       ))}
 
-      <div className="continue_shopping_btn">
-        <button onClick={onContinueShopping}>Continue Shopping</button>
-        <br />
-        <button className="get-started-button1">
-          Checkout
-        </button>
-      </div>
+     <div className="cart-buttons">
+  <button className="product-button" onClick={onContinueShopping}>
+    Continue Shopping
+  </button>
+
+  <button className="product-button">
+    Checkout
+  </button>
+</div> 
     </div>
   );
 };
