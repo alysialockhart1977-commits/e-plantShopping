@@ -45,7 +45,10 @@ const CartItem = ({ onContinueShopping }) => {
   const calculateTotalCost = (item) => {
     return (item.price * item.quantity).toFixed(2);
   };
-
+   // Checkout (placeholder function
+   const handleCheckoutShopping = (e) => {
+      alert('Functionality to be added for future reference');
+  };
   return (
     <div className="cart-container">
       <h2 style={{ color: 'black' }}>
@@ -66,7 +69,6 @@ const CartItem = ({ onContinueShopping }) => {
   <button className="qty-btn" onClick={() => handleIncrement(item)}>+</button>
 </div>
 
-
             <div className="cart-item-total">
               Total: ${calculateTotalCost(item)}
             </div>
@@ -86,7 +88,7 @@ const CartItem = ({ onContinueShopping }) => {
     Continue Shopping
   </button>
 
-  <button className="product-button">
+  <button className="product-button" onClick={handleCheckoutShopping}>
     Checkout
   </button>
 </div> 
@@ -95,3 +97,4 @@ const CartItem = ({ onContinueShopping }) => {
 };
 
 export default CartItem;
+

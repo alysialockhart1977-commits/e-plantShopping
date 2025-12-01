@@ -218,6 +218,13 @@ body {
   .product-button.added-to-cart {
     background-color: grey; /* Grey when product is added */
   }
+  /* Darker gray for disabled Add to Cart button */
+button.disabled {
+  background-color: #555 !important;
+  color: white !important;
+  cursor: not-allowed;
+  opacity: 1;
+}
   @media (max-width: 1200px) {
     .product-card {
       flex: 1 1 calc(33.33% - 20px); /* Adjust width for 3 cards per row with 20px gap on medium screens */
